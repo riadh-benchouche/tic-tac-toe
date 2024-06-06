@@ -12,3 +12,4 @@ server/dist
 public/dist
 apps/api/dist
 apps/api/.env
+.idea
