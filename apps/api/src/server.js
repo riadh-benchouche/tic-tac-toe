@@ -8,7 +8,6 @@ import messageRouter from "./routes/messageRouter.js";
 import gameRouter from "./routes/gameRouter";
 
 dotenv.config({});
-export const createServer = () => {
     const app = express();
     app
         .disable("x-powered-by")
@@ -21,5 +20,4 @@ export const createServer = () => {
         .use("/games", gameRouter)
 
 
-    return app;
-};
+export default app;

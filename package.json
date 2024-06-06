@@ -1,4 +1,5 @@
 {
+  "name": "tic-tac-toe",
   "private": true,
   "scripts": {
     "build": "turbo run build",

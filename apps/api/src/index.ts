@@ -5,17 +5,20 @@ import {createServer} from "./server.js";
 // @ts-ignore
 import {play} from "./controllers/gameController.js";
 // @ts-ignore
-import Message from "./src/models/message.js";
+import Message from "./models/Message.js";
 import {Server} from "socket.io";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import app from "./server.js";
+import http from "http";
 
 dotenv.config()
 const port = process.env.PORT;
 const dbUri = process.env.DB_URI || "";
-const app = createServer();
+app.set("port", port);
+const server = http.createServer(app);
 
-const io = new Server(app, {
+const io = new Server(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
@@ -111,6 +114,8 @@ io.on("connection", (socket) => {
         }
     });
 });
+
+
 
 app.set("socketio", io);
 app.listen(port, () => {

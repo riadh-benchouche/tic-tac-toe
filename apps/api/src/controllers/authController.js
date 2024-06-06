@@ -6,6 +6,32 @@ import generateString from "../utils/generateString.js";
 import {sendEmailConfirmation} from "../services/emailService";
 
 dotenv.config();
+
+export const confirmEmail = async (req, res, next) => {
+    try {
+        const { email, authentificationToken } = req.query;
+
+        if (!email || !authentificationToken) {
+            return res.status(400).json({ message: 'Invalid confirmation link' });
+        }
+
+        const user = await User.findOne({ email, token: authentificationToken });
+
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid confirmation link' });
+        }
+
+        user.confirmed = true;
+
+        await user.save();
+
+        res.status(200).json({ message: 'Account confirmed successfully' });
+    } catch (error) {
+        console.error(`Error confirming account: ${error}`);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 export const register = async (req, res) => {
     try {
         const {username, email, password} = req.body;
@@ -98,30 +124,3 @@ export const login = async (req, res) => {
         });
     }
 };
-
-export const confirmEmail = async (req, res) => {
-    try {
-        const {email, token} = req.body;
-
-        const user = await User.findOne({email});
-
-        if (!user) {
-            return res.sendStatus(404);
-        }
-
-        if (user.token !== token) {
-            return res.sendStatus(401);
-        }
-
-        user.confirmed = true;
-        user.token = null;
-
-        await user.save();
-
-        res.sendStatus(200);
-    } catch (error) {
-        res.status(500).json({
-            error: `An error occurred while confirming email: ${error}`,
-        });
-    }
-}

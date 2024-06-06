@@ -7,7 +7,8 @@ import {
     createMessage,
     updateMessage,
     deleteMessage,
-} from "../controllers/messageController.js";
+} from "../controllers/MessageController.js";
+
 import {authMiddleware} from "../middlewares/authMiddleware";
 
 router.get("/", authMiddleware, getChatMessages);

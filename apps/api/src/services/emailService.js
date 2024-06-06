@@ -20,21 +20,25 @@ export const sendEmail = async (email, subject, template) => {
 
 export const sendEmailConfirmation = async (email, token) => {
     try {
-        const confirmationLink = `${process.env.HOST_CLIENT}/login?email=${email}&authentificationToken=${token}`;
+        const confirmationLink = `http://localhost:3000/auth/authorized?email=${email}&authentificationToken=${token}`;
 
         const subject = "Confirmation de votre compte";
 
-        console.log("confirmationLink", __dirname)
+        console.log("confirmationLink", confirmationLink)
 
         const htmlTemplate = fs.readFileSync(
             path.join(__dirname, "/src/templates/email-confirmation.html"),
             "utf8"
         );
 
+        console.log("Template before replacement:", htmlTemplate);
+
         const template = htmlTemplate.replace(
             "{{confirmationLink}}",
             confirmationLink
         );
+
+        console.log("Template after replacement:", template);
 
         await sendEmail(email, subject, template);
 
