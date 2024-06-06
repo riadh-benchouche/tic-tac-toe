@@ -15,7 +15,7 @@ export const createRoom = async (req, res) => {
         });
 
         const room = await newRoom.save();
-        res.status(201).json({ room });
+        res.status(201).json({room});
     } catch (error) {
         res.status(500).json({ error: `An error occurred while creating a room: ${error.message}` });
     }
