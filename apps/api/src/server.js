@@ -3,8 +3,9 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import auth from "./routes/auth.js";
-import room from "./routes/roomRouter.js";
-
+import roomRouter from "./routes/roomRouter.js";
+import messageRouter from "./routes/messageRouter.js";
+import gameRouter from "./routes/gameRouter";
 
 dotenv.config({});
 export const createServer = () => {
@@ -15,7 +16,10 @@ export const createServer = () => {
         .use(json())
         .use(cors())
         .use("/auth", auth)
-        .use("/room", room)
+        .use("/room", roomRouter)
+        .use("/messages", messageRouter)
+        .use("/games", gameRouter)
+
 
     return app;
 };
