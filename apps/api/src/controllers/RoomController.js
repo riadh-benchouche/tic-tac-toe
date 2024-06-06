@@ -1,82 +1,76 @@
 import Room from "../models/Room";
-import User from "../models/User";
-import generateString from "../utils/generateString";
+import codeRoom from "../utils/codeRoom";
 
 export const createRoom = async (req, res) => {
+    const roomId = codeRoom(6);
+    const userId = req.body.user.userId;
+
     try {
-        const roomId = generateString(6);
-        const userId = req.body.user.userId;
-        const room = await Room.create({
+        const newRoom = new Room({
             roomId,
             players: [userId],
             activePlayer: userId,
             winner: null,
-            gameOver: false,
+            isFinished: false,
         });
 
-        res.status(201).json({room});
+        const room = await newRoom.save();
+        res.status(201).json({ room });
     } catch (error) {
-        res.status(500).json({
-            error: `An error occurred while creating a room: ${error}`,
-        });
+        res.status(500).json({ error: `An error occurred while creating a room: ${error.message}` });
     }
-}
+};
 
 export const joinRoom = async (req, res) => {
-    try {
-        const {roomId} = req.params;
-        const userId = req.body.user.userId;
+    const { roomId } = req.params;
+    const userId = req.body.user.userId;
 
-        const room = await Room.findOne({roomId});
+    try {
+        const room = await Room.findOne({ roomId }).populate("players");
 
         if (!room) {
-            return res.sendStatus(404);
+            return res.status(404).json({ error: "Room not found" });
         }
 
-        if (room.players.includes(userId)) {
-            return res.status(400).json({
-                error: "You are already in this room",
-            });
+        if (room.players.some(player => player.equals(userId))) {
+            return res.status(400).json({ error: "You are already in this room" });
         }
 
         if (room.players.length >= 2) {
-            return res.status(400).json({
-                error: "This room is full",
-            });
+            return res.status(400).json({ error: "This room is full" });
         }
 
         room.players.push(userId);
-
         await room.save();
 
-        res.json({room}).populate("players");
+        res.json({ room });
     } catch (error) {
-        res.status(500).json({
-            error: `An error occurred while joining a room: ${error}`,
-        });
+        res.status(500).json({ error: `An error occurred while joining a room: ${error.message}` });
     }
-}
+};
 
-export const leaveRoom = async (req, res) => {
+export const exitRoom = async (req, res) => {
+    const { roomId } = req.params;
+    const userId = req.user._id;
+
     try {
-        const {roomId} = req.params;
-        const userId = req.user._id;
+        const room = await Room.findOne({ roomId });
 
-        const room = await Room.findOne({roomId});
         if (!room) {
-            return res.sendStatus(404);
+            return res.status(404).json({ error: "Room not found" });
         }
 
-        const index = room.players.indexOf(userId);
-        if (index === -1) {
-            return res.sendStatus(400);
+        const playerIndex = room.players.findIndex(player => player.equals(userId));
+
+        if (playerIndex === -1) {
+            return res.status(400).json({ error: "You are not in this room" });
         }
-        room.players.splice(index, 1);
+
+        room.players.splice(playerIndex, 1);
         await room.save();
-        res.json({room});
+
+        res.json({ room });
     } catch (error) {
-        res.status(500).json({
-            error: `An error occurred while leaving a room: ${error}`,
-        });
+        res.status(500).json({ error: `An error occurred while leaving a room: ${error.message}` });
     }
-}
+};

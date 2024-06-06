@@ -3,7 +3,7 @@ import {error} from "@repo/logger";
 // @ts-ignore
 import {createServer} from "./server.js";
 // @ts-ignore
-import {play} from "./controllers/gameController.js";
+import {launchGame} from "./controllers/morpionController.js";
 // @ts-ignore
 import Message from "./models/Message.js";
 import {Server} from "socket.io";
@@ -44,10 +44,10 @@ io.on("connection", (socket) => {
 
     socket.on("sendMessage", async (message) => {
         try {
-            const {sender, isPrivate, content} = message;
+            const {sender, isInRoom, content} = message;
             const newMessage = new Message({
                 sender,
-                isPrivate,
+                isInRoom,
                 content
             });
             const savedMessage = await newMessage.save();
@@ -90,7 +90,7 @@ io.on("connection", (socket) => {
 
     socket.on("playerPlayed", async ({userId, row, col}) => {
         try {
-            const room = await play({userId, row, col});
+            const room = await launchGame({userId, row, col});
             io.emit("playerPlayed", room);
         } catch (err) {
             console.error(err);

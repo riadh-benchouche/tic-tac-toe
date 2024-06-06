@@ -1,13 +1,7 @@
 import express from "express";
 
 const router = express.Router();
-import {
-    getChatMessages,
-    getRoomMessages,
-    createMessage,
-    updateMessage,
-    deleteMessage,
-} from "../controllers/MessageController.js";
+import {getChatMessages, getRoomMessages, createMessage, updateMessage, deleteMessage} from "../controllers/MessageController.js";
 
 import {authMiddleware} from "../middlewares/authMiddleware";
 

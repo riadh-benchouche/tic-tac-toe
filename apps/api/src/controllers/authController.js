@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import generateString from "../utils/generateString.js";
-import {sendEmailConfirmation} from "../services/emailService";
+import {sendEmailConfirmation} from "../services/mailService";
 
 dotenv.config();
 

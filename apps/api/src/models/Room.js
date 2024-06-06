@@ -20,18 +20,18 @@ const roomSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
+        isFinished: {
+            type: Boolean,
+            default: false,
+        },
         board: {
             type: [[String]],
             default: [
-                ["", "", ""],
-                ["", "", ""],
-                ["", "", ""],
+                ['', '', ''],
+                ['', '', ''],
+                ['', '', ''],
             ],
         },
-        gameOver: {
-            type: Boolean,
-            default: false,
-        }
     },
     {
         timestamps: true,

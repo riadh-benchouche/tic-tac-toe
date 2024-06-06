@@ -1,11 +1,8 @@
 import Room from "../models/Room";
 
-export const play = async (req, res) => {
+export const launchGame = async (req, res) => {
     try {
-        const room = await Room.findOne({
-            players: req.user.userId,
-            gameOver: false,
-        }).populate("players", "username color");
+        const room = await Room.findOne({players: req.user.userId, isFinished: false,}).populate("players", "username color");
         if (!room) return res.status(404).json({error: "Room not found"});
 
         const {row, column} = req.body;
@@ -22,12 +19,10 @@ export const play = async (req, res) => {
     }
 }
 
-export const getGamesHistory = async (req, res) => {
+export const getMorpionsHistory = async (req, res) => {
     try {
-        const games = await Room.find({
-            players: req.user.userId,
-            gameOver: true,
-        }).populate("players", "username color").sort({createdAt: -1});
+
+        const games = await Room.find({players: req.user.userId, isFinished: true,}).populate("players", "username color").sort({createdAt: -1});
 
         res.status(200).json(games);
     } catch (error) {

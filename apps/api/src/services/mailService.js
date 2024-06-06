@@ -1,5 +1,4 @@
-// @ts-ignore
-import mailTransporter from "../config/mail-config.js";
+import mailTransporter from "../config/mail-settings.js";
 import fs from "fs";
 import path from "path";
 

@@ -14,12 +14,12 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: true,
         },
+        token: {
+            type: String,
+        },
         color: {
             type: String,
             default: "#3f51b5",
-        },
-        token: {
-            type: String,
         },
         confirmed: {
             type: Boolean,
