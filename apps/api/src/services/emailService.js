@@ -27,7 +27,7 @@ export const sendEmailConfirmation = async (email, token) => {
         console.log("confirmationLink", confirmationLink)
 
         const htmlTemplate = fs.readFileSync(
-            path.join(__dirname, "/src/templates/email-confirmation.html"),
+            path.join(__dirname, "/src/templates/confirmation.html"),
             "utf8"
         );
 
