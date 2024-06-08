@@ -10,7 +10,7 @@ const useUser = userStore();
 </script>
 
 <template>
-  <div class="bg-white">
+  <div>
     <header class="absolute inset-x-0 top-0 z-50 max-w-7xl ml-auto mr-auto">
       <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div class="flex lg:flex-1">
@@ -61,7 +61,7 @@ const useUser = userStore();
         </DialogPanel>
       </Dialog>
     </header>
-    <main class="h-screen">
+    <main class="h-screen bg-gray-800">
       <slot/>
     </main>
   </div>

@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
-        roomId: {
-            type: mongoose.Schema.Types.ObjectId,
+        roomCode: {
+            type: String,
             ref: "Room",
             required: false,
         },

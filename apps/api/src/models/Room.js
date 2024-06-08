@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
 
 const roomSchema = new mongoose.Schema({
-        roomId: {
+        roomCode: {
             type: String,
-            required: true,
-            unique: true,
+            required: true
         },
         players: [
             {

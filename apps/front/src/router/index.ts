@@ -28,13 +28,15 @@ const router = createRouter({
         {
             path: '/profile',
             name: 'ProfileView',
-            component: HomeView,
+            // @ts-ignore
+            component: () => import('@/views/Profile.vue'),
             meta: {requiresAuth: true}
         },
         {
             path: '/game/:id',
             name: 'GameView',
-            component: () => import('@/views/game/Game.vue'),
+            // @ts-ignore
+            component: () => import('@/views/Game.vue'),
             meta: {requiresAuth: true}
         },
         {
@@ -48,7 +50,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token')
 
-    if (to.matched.some(record => record.meta.requiresAuth) && token !== null) {
+    if (to.matched.some(record => record.meta.requiresAuth) && !token) {
         return next({name: 'login'})
     }
 

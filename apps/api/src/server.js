@@ -10,14 +10,14 @@ import morpionRouter from "./routes/morpionRouter";
 dotenv.config({});
 const app = express();
 app
-.disable("x-powered-by")
-.use(urlencoded({extended: true}))
-.use(json())
-.use(cors())
-.use("/auth", auth)
-.use("/room", roomRouter)
-.use("/messages", messageRouter)
-.use("/games", morpionRouter)
+    .disable("x-powered-by")
+    .use(urlencoded({extended: true}))
+    .use(json())
+    .use(cors())
+    .use("/auth", auth)
+    .use("/room", roomRouter)
+    .use("/messages", messageRouter)
+    .use("/games", morpionRouter)
 
 
 export default app;
