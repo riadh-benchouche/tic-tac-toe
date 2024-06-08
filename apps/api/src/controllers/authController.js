@@ -2,7 +2,7 @@ import User from "../models/User";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import generateString from "../utils/generateString.js";
+import codeRoom from "../utils/codeRoom.js";
 import {sendEmailConfirmation} from "../services/mailService";
 
 dotenv.config();
@@ -45,7 +45,7 @@ export const register = async (req, res) => {
         if (existingUser)
             return res.sendStatus(409);
 
-        const authentificationToken = generateString(6);
+        const authentificationToken = codeRoom(6);
 
         const user = new User({
             username,
