@@ -1,5 +1,6 @@
 import Room from "../models/Room";
 import codeRoom from "../utils/codeRoom";
+import User from "../models/User";
 
 export const createRoom = async (req, res) => {
     const userId = req.body.user.userId;
@@ -27,6 +28,8 @@ export const joinRoom = async (req, res) => {
     try {
         const room = await Room.findOne({roomCode: roomId}).populate("players");
 
+        const user = await User.findById(userId);
+
         if (!room) {
             return res.status(404).json({error: "Room not found"});
         }
@@ -42,7 +45,7 @@ export const joinRoom = async (req, res) => {
         room.players.push(userId);
         await room.save();
 
-        res.json({room});
+        res.json({room, user});
     } catch (error) {
         res.status(500).json({error: `An error occurred while joining a room: ${error.message}`});
     }

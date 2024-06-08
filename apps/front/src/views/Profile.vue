@@ -2,11 +2,14 @@
 import {computed, onMounted, reactive, ref} from 'vue';
 import FullLayout from '@/layouts/FullLayout.vue';
 import {CubeIcon, UserCircleIcon} from '@heroicons/vue/24/outline';
+import {userStore} from "@/store/UserStore";
 
 const secondaryNavigation = ref([
   {name: 'History', href: '#', icon: CubeIcon, current: true},
   {name: 'Profile', href: '#', icon: UserCircleIcon, current: false},
 ]);
+
+const useUser = userStore();
 
 const state = reactive({
   games: [],
@@ -91,12 +94,12 @@ const formatDate = (date) => {
                               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Date</th>
                               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Players
                               </th>
-                              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Winner</th>
+                              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Result</th>
                             </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-800 ">
                             <tr v-for="game in state.games" :key="game._id"
-                                class="bg-gray-700 hover:bg-gray-600">
+                                :class="[game.winner === useUser.user._id ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600', 'p-4 rounded-md']">
                               <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
                                 {{ game.roomCode }}
                               </td>
@@ -106,7 +109,7 @@ const formatDate = (date) => {
                                 {{ user.username }} {{ index < game.players.length - 1 ? ', ' : '' }}
                               </span>
                               </td>
-                              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{{ game.winner }}</td>
+                              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{{ game.winner === useUser.user._id ? "Win" : "Lose" }}</td>
                             </tr>
                             </tbody>
                           </table>

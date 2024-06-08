@@ -105,6 +105,24 @@ io.on("connection", (socket) => {
         }
     })
 
+    function checkWinner(board) {
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+    
+        for (const combination of winningCombinations) {
+            const [a, b, c] = combination;
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                console.log(`Winner found: ${board[a]}`);
+                return board[a]; // Return the winner (X or O)
+            }
+        }
+
+        return null;
+    }
+
     socket.on("playerPlayed", async ({roomCode, userId, row, col}) => {
         try {
             const room = await Room.findOne({roomCode}).populate("players", "username");
@@ -134,7 +152,19 @@ io.on("connection", (socket) => {
                 return;
             }
 
+            const board = room.board.flat();
+            const winnerSymbol = checkWinner(board);
+
+            if (winnerSymbol) {
+                room.isFinished = true;
+                room.winner = (winnerSymbol === "X") ? room.players[0]._id : room.players[1]._id;
+            }
+    
             await room.save();
+    
+            if (room.isFinished) {
+                io.emit("gameFinished", { roomCode, winner: room.winner });
+            }
             io.emit("playerPlayed", {room});
         } catch (err) {
             console.error(err);

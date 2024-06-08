@@ -3,6 +3,9 @@ import {reactive, ref} from 'vue'
 import FullLayout from "@/layouts/FullLayout.vue";
 import {Dialog, DialogDescription, DialogPanel, DialogTitle, TransitionChild, TransitionRoot} from '@headlessui/vue'
 import {useRouter} from "vue-router";
+import {io} from 'socket.io-client';
+
+const socket = io('http://localhost:9005');
 
 const open = ref(false)
 const openConfirmation = ref(false)
@@ -26,6 +29,8 @@ const joinParty = () => {
       response.json().then(async data => {
         open.value = false;
         await router.push('/game/' + data.room.roomCode);
+
+        socket.emit('userJoinedGame', { room: data.room.roomCode, user: data.user });
       });
     } else {
       response.json().then(data => {
