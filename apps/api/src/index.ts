@@ -4,6 +4,8 @@ import {error} from "@repo/logger";
 import Message from "./models/Message.js";
 // @ts-ignore
 import Room from "./models/Room.js";
+// @ts-ignore
+import User from "./models/User.js";
 import {Server} from "socket.io";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -111,7 +113,7 @@ io.on("connection", (socket) => {
             [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
             [0, 4, 8], [2, 4, 6]             // Diagonals
         ];
-    
+
         for (const combination of winningCombinations) {
             const [a, b, c] = combination;
             if (board[a] && board[a] === board[b] && board[a] === board[c]) {
@@ -159,11 +161,15 @@ io.on("connection", (socket) => {
                 room.isFinished = true;
                 room.winner = (winnerSymbol === "X") ? room.players[0]._id : room.players[1]._id;
             }
-    
+
             await room.save();
-    
+
             if (room.isFinished) {
-                io.emit("gameFinished", { roomCode, winner: room.winner });
+                const winner = await User.findById(room.winner);
+                io.emit("gameFinished", {
+                    roomCode,
+                    winner: winner?.username,
+                });
             }
             io.emit("playerPlayed", {room});
         } catch (err) {

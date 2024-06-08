@@ -22,7 +22,8 @@ const router = createRouter({
         {
             path: '/chat',
             name: 'ChatView',
-            component: HomeView,
+            // @ts-ignore
+            component: () => import('@/views/Chat.vue'),
             meta: {requiresAuth: true}
         },
         {

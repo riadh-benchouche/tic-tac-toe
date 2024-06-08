@@ -21,7 +21,7 @@ const state = reactive({
 
 const socket = io('http://localhost:9005');
 
-socket.on('userJoinedGame', ({ room, user }) => {
+socket.on('userJoinedGame', ({room, user}) => {
   if (room === router.currentRoute.value.params.id) {
     state.users.push(user);
   }
@@ -88,7 +88,7 @@ onMounted(() => {
     state.board = data.room.board
   });
 
-  socket.on('gameFinished', ({ roomCode, winner }) => {
+  socket.on('gameFinished', ({roomCode, winner}) => {
     if (roomCode === router.currentRoute.value.params.id) {
       state.isFinished = true;
       state.winner = winner;
@@ -144,21 +144,24 @@ watch(() => state.messages, () => {
   <FullLayout>
     <div v-if="state.isFinished" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50">
       <div class="bg-white p-4 rounded-3xl shadow-lg">
-          <div class="flex flex-col items-center space-y-4">
-            <h3 class="text-lg font-semibold text-gray-900">Game Over</h3>
-            <p class="text-gray-500">Winner is {{ state.winner }}</p>
-            <button type="button"
-                    @click="() => router.push('/')"
-                    class="rounded-full bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600 transition-transform transform hover:scale-105">
-              Go Back
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 inline-block ml-1" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3 10l9-9m0 0l9 9m-9-9v18"/>
-              </svg>
-            </button>
-          </div>
+        <div class="flex flex-col items-center space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900">Game Over</h3>
+          <p class="text-gray-500">Winner is {{ state.winner }}</p>
+          <button type="button"
+                  @click="() => {
+                     socket.disconnect()
+                     router.push('/')
+                    }"
+                  class="rounded-full bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600 transition-transform transform hover:scale-105">
+            Go Back
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 inline-block ml-1" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 10l9-9m0 0l9 9m-9-9v18"/>
+            </svg>
+          </button>
         </div>
+      </div>
     </div>
 
     <div v-else class="max-w-7xl mx-auto p-4 pt-36">
@@ -224,7 +227,6 @@ watch(() => state.messages, () => {
                 <p class="text-gray-500">We're here to help</p>
               </div>
               <div
-                  v-if="state.messages?.length > 0"
                   :ref="messageContainer"
                   class="h-full max-h-[500px] overflow-y-auto p-4 space-y-3 border-[1px] my-4 border-gray-200 rounded-3xl">
                 <div v-for="(message, index) in state.messages" :key="index" class="flex flex-col space-x-3">
