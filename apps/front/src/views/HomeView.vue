@@ -4,8 +4,8 @@ import FullLayout from "@/layouts/FullLayout.vue";
 import {Dialog, DialogDescription, DialogPanel, DialogTitle, TransitionChild, TransitionRoot} from '@headlessui/vue'
 import {useRouter} from "vue-router";
 
-
 const open = ref(false)
+const openConfirmation = ref(false)
 const router = useRouter()
 const state = reactive({
   partyCode: '',
@@ -23,9 +23,9 @@ const joinParty = () => {
     body: JSON.stringify(state),
   }).then(response => {
     if (response.ok) {
-      response.json().then(data => {
-        console.log(data);
+      response.json().then(async data => {
         open.value = false;
+        await router.push('/game/' + data.room.roomCode);
       });
     } else {
       response.json().then(data => {
@@ -47,6 +47,7 @@ const createParty = () => {
   }).then(response => {
     if (response.ok) {
       response.json().then(async data => {
+        openConfirmation.value = false;
         await router.push('/game/' + data.room.roomCode);
       });
     } else {
@@ -63,14 +64,55 @@ const joinOrCreateParty = async (type: string) => {
   }
   if (type === 'join') {
     open.value = true;
-  } else {
-    createParty();
+  }
+  if (type === 'create') {
+    openConfirmation.value = true;
   }
 }
-
-
 </script>
 <template>
+  <TransitionRoot as="template" :show="openConfirmation">
+    <Dialog class="relative z-10" @close="openConfirmation = false">
+      <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
+                       leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"/>
+      </TransitionChild>
+
+      <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <TransitionChild as="template" enter="ease-out duration-300"
+                           enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                           enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200"
+                           leave-from="opacity-100 translate-y-0 sm:scale-100"
+                           leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+            <DialogPanel
+                class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+              <div>
+                <div class="mt-3 text-center sm:mt-5">
+                  <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">Create party
+                  </DialogTitle>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-500">Are you sure you want to create a party?</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-5 sm:mt-6 flex flex-1 space-x-2">
+                <button type="button"
+                        @click="createParty"
+                        class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                  Create party
+                </button>
+                <button type="button"
+                        class="inline-flex w-full justify-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        @click="openConfirmation = false">Cancel
+                </button>
+              </div>
+            </DialogPanel>
+          </TransitionChild>
+        </div>
+      </div>
+    </Dialog>
+  </TransitionRoot>
   <TransitionRoot as="template" :show="open">
     <Dialog class="relative z-10" @close="open = false">
       <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"

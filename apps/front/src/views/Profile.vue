@@ -41,6 +41,10 @@ const currentTabContent = computed(() => {
   const currentTab = secondaryNavigation.value.find(item => item.current);
   return currentTab ? currentTab.name : '';
 });
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleString()
+}
 </script>
 
 <template>
@@ -96,7 +100,7 @@ const currentTabContent = computed(() => {
                               <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
                                 {{ game.roomCode }}
                               </td>
-                              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{{ game.createdAt }}</td>
+                              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{{ formatDate(game.createdAt) }}</td>
                               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                               <span v-for="(user, index) in game.players" :key="index">
                                 {{ user.username }} {{ index < game.players.length - 1 ? ', ' : '' }}
