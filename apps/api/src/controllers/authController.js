@@ -9,26 +9,26 @@ dotenv.config();
 
 export const confirmEmail = async (req, res, next) => {
     try {
-        const { email, authentificationToken } = req.query;
+        const {email, authentificationToken} = req.query;
 
         if (!email || !authentificationToken) {
-            return res.status(400).json({ message: 'Invalid confirmation link' });
+            return res.status(400).json({message: 'Invalid confirmation link'});
         }
 
-        const user = await User.findOne({ email, token: authentificationToken });
+        const user = await User.findOne({email, token: authentificationToken});
 
         if (!user) {
-            return res.status(400).json({ message: 'Invalid confirmation link' });
+            return res.status(400).json({message: 'Invalid confirmation link'});
         }
 
         user.confirmed = true;
 
         await user.save();
 
-        res.status(200).json({ message: 'Account confirmed successfully' });
+        res.status(200).json({message: 'Account confirmed successfully'});
     } catch (error) {
         console.error(`Error confirming account: ${error}`);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 };
 
@@ -111,6 +111,7 @@ export const login = async (req, res) => {
         const token = jwt.sign(payload, process.env.SECRET_KEY, options);
         res.json({
             user: {
+                _id: user._id,
                 username: user.username,
                 email: user.email,
                 confirmed: user.confirmed,

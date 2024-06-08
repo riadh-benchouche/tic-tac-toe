@@ -46,8 +46,8 @@ const createParty = () => {
     },
   }).then(response => {
     if (response.ok) {
-      response.json().then(data => {
-        console.log(data);
+      response.json().then(async data => {
+        await router.push('/game/' + data.room.roomCode);
       });
     } else {
       response.json().then(data => {

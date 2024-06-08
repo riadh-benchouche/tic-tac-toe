@@ -1,24 +1,23 @@
 import {log} from "@repo/logger";
 import {error} from "@repo/logger";
 // @ts-ignore
-import {createServer} from "./server.js";
-// @ts-ignore
-import {launchGame} from "./controllers/morpionController.js";
-// @ts-ignore
 import Message from "./models/Message.js";
+// @ts-ignore
+import Room from "./models/Room.js";
 import {Server} from "socket.io";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+// @ts-ignore
 import app from "./server.js";
 import http from "http";
 
 dotenv.config()
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 const dbUri = process.env.DB_URI || "";
 app.set("port", port);
-const server = http.createServer(app);
 
-const io = new Server(server, {
+const server = http.createServer(app);
+const io = new Server(9005, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
@@ -32,11 +31,6 @@ let usersLogged: {
 }[] = [];
 let usersChat: any[] = [];
 io.on("connection", (socket) => {
-    socket.on("userLogged", (user) => {
-        usersLogged.push({id: socket.id, user});
-        io.emit("usersLogged", usersLogged);
-    });
-
     socket.on("joinChat", (user) => {
         usersChat.push({id: socket.id, user});
         io.emit("joinChat", usersChat);
@@ -44,8 +38,9 @@ io.on("connection", (socket) => {
 
     socket.on("sendMessage", async (message) => {
         try {
-            const {sender, isInRoom, content} = message;
+            const {sender, isInRoom, content, roomCode} = message;
             const newMessage = new Message({
+                roomCode,
                 sender,
                 isInRoom,
                 content
@@ -54,7 +49,7 @@ io.on("connection", (socket) => {
 
             const populatedMessage = await Message.findById(
                 savedMessage._id
-            ).populate("sender", "username color");
+            ).populate("sender", "username");
 
             io.emit("newMessage", populatedMessage);
         } catch (error) {
@@ -88,14 +83,64 @@ io.on("connection", (socket) => {
         io.emit("userLeftGame", {roomId, user});
     });
 
-    socket.on("playerPlayed", async ({userId, row, col}) => {
+    socket.on("restartGame", async ({roomCode}) => {
         try {
-            const room = await launchGame({userId, row, col});
-            io.emit("playerPlayed", room);
+            const room = await Room.findOne({roomCode}).populate("players", "username");
+
+            if (!room) {
+                console.error("Room not found");
+                return;
+            }
+            room.board = [
+                ["", "", ""],
+                ["", "", ""],
+                ["", "", ""]
+            ];
+
+            room.activePlayer = room.players[0]._id;
+            await room.save();
+            io.emit("restartGame", {room});
+        } catch (err) {
+            console.error(err);
+        }
+    })
+
+    socket.on("playerPlayed", async ({roomCode, userId, row, col}) => {
+        try {
+            const room = await Room.findOne({roomCode}).populate("players", "username");
+            if (!room) {
+                console.error("Room not found");
+                return;
+            }
+
+            if (room.activePlayer.toString() !== userId) {
+                console.error("Not the active player");
+                return;
+            }
+
+            if (room.board[row][col] !== "") {
+                console.error("Cell already occupied");
+                return;
+            }
+
+            if (userId === room.players[0]._id.toString()) {
+                room.board[row][col] = "X";
+                room.activePlayer = room.players[1]._id;
+            } else if (userId === room.players[1]._id.toString()) {
+                room.board[row][col] = "O";
+                room.activePlayer = room.players[0]._id;
+            } else {
+                console.error("User not part of the game");
+                return;
+            }
+
+            await room.save();
+            io.emit("playerPlayed", {room});
         } catch (err) {
             console.error(err);
         }
     });
+
 
     socket.on("disconnect", () => {
         const userDisconnectedFromChat = usersChat.find(
@@ -114,8 +159,6 @@ io.on("connection", (socket) => {
         }
     });
 });
-
-
 
 app.set("socketio", io);
 app.listen(port, () => {
