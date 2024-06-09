@@ -52,6 +52,7 @@ export const register = async (req, res) => {
             email,
             password: hashedPassword,
             token: authentificationToken,
+            color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
             confirmed: false,
         });
 
@@ -69,7 +70,6 @@ export const register = async (req, res) => {
             email,
             authentificationToken
         );
-
 
         await user.save();
         res.json({user, token});

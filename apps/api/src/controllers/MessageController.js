@@ -3,7 +3,7 @@ import Message from "../models/Message";
 export const getChatMessages = async (req, res) => {
     try {
         const messages = await Message.find({isInRoom: false})
-            .populate("sender", "username");
+            .populate("sender", "username color");
 
         res.status(200).json(messages);
     } catch (error) {

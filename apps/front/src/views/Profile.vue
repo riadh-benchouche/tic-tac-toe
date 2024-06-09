@@ -99,17 +99,24 @@ const formatDate = (date) => {
                             </thead>
                             <tbody class="divide-y divide-gray-800 ">
                             <tr v-for="game in state.games" :key="game._id"
-                                :class="[game.winner === useUser.user._id ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600', 'p-4 rounded-md']">
+                                :class="[game.winner === useUser.user._id ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-700 hover:bg-gray-600', 'p-4 rounded-md']">
                               <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
                                 {{ game.roomCode }}
                               </td>
-                              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{{ formatDate(game.createdAt) }}</td>
+                              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                                {{ formatDate(game.createdAt) }}
+                              </td>
                               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                               <span v-for="(user, index) in game.players" :key="index">
                                 {{ user.username }} {{ index < game.players.length - 1 ? ', ' : '' }}
                               </span>
                               </td>
-                              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{{ game.winner === useUser.user._id ? "Win" : "Lose" }}</td>
+                              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                                <span v-if="game.winner !== useUser.user._id"
+                                      class="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Lose</span>
+                                <span v-else
+                                      class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Win</span>
+                              </td>
                             </tr>
                             </tbody>
                           </table>
