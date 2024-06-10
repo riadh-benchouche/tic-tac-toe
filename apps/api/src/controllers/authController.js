@@ -126,3 +126,31 @@ export const login = async (req, res) => {
         });
     }
 };
+
+export const updateAccount = async (req, res) => {
+    try {
+        const {username, password} = req.body;
+
+        const user = await User.findById(req.body.user.userId);
+
+        if (!user) {
+            return res.sendStatus(404);
+        }
+
+        if (username) {
+            user.username = username;
+        }
+
+        if (password) {
+            user.password = await bcrypt.hash(password, 10);
+        }
+
+        await user.save();
+        res.sendStatus(200);
+    } catch (error) {
+        res.status(500).json({
+            error: `An error occurred while updating account: ${error}`,
+        });
+    }
+}
+

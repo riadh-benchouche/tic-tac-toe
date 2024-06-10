@@ -44,7 +44,6 @@ const currentTabContent = computed(() => {
   const currentTab = secondaryNavigation.value.find(item => item.current);
   return currentTab ? currentTab.name : '';
 });
-
 const formatDate = (date) => {
   return new Date(date).toLocaleString()
 }
@@ -137,22 +136,19 @@ const formatDate = (date) => {
               <div class="pt-6 sm:flex">
                 <dt class="font-medium text-gray-200 sm:w-64 sm:flex-none sm:pr-6">Full name</dt>
                 <dd class="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-                  <div class="text-gray-200">Tom Cook</div>
-                  <button type="button" class="font-semibold text-indigo-600 hover:text-indigo-500">Update</button>
+                  <div class="text-gray-200">{{ useUser.user.username }}</div>
                 </dd>
               </div>
               <div class="pt-6 sm:flex">
                 <dt class="font-medium text-gray-200 sm:w-64 sm:flex-none sm:pr-6">Email address</dt>
                 <dd class="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-                  <div class="text-gray-200">tom.cook@example.com</div>
-                  <button type="button" class="font-semibold text-indigo-600 hover:text-indigo-500">Update</button>
+                  <div class="text-gray-200">{{ useUser.user.email }}</div>
                 </dd>
               </div>
               <div class="pt-6 sm:flex">
                 <dt class="font-medium text-gray-200 sm:w-64 sm:flex-none sm:pr-6">Password</dt>
                 <dd class="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
                   <div class="text-gray-200">*********</div>
-                  <button type="button" class="font-semibold text-indigo-600 hover:text-indigo-500">Update</button>
                 </dd>
               </div>
             </dl>
