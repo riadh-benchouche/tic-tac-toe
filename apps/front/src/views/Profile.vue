@@ -18,7 +18,7 @@ const state = reactive({
 
 onMounted(
     async () => {
-      const response = await fetch('http://localhost:3000/games/history', {
+      const response = await fetch(import.meta.env.VITE_API_HOST + '/games/history', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

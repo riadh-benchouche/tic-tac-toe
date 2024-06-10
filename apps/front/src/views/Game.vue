@@ -19,7 +19,7 @@ const state = reactive({
   winner: null,
 });
 
-const socket = io('http://localhost:9005');
+const socket = io(import.meta.env.VITE_WEBSOCKET_HOST);
 
 socket.on('userJoinedGame', ({room, user}) => {
   if (room === router.currentRoute.value.params.id) {
@@ -30,7 +30,7 @@ socket.on('userJoinedGame', ({room, user}) => {
 
 const getCurrentRoom = () => {
   const roomCode = router.currentRoute.value.params.id;
-  fetch('http://localhost:3000/room/getCurrentRoom/' + roomCode, {
+  fetch(import.meta.env.VITE_API_HOST + '/room/getCurrentRoom/' + roomCode, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ const getCurrentRoom = () => {
 
 const getMessages = () => {
   const roomCode = router.currentRoute.value.params.id;
-  fetch('http://localhost:3000/messages/room/' + roomCode, {
+  fetch(import.meta.env.VITE_API_HOST + '/messages/room/' + roomCode, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import {Dialog, DialogDescription, DialogPanel, DialogTitle, TransitionChild, Tr
 import {useRouter} from "vue-router";
 import {io} from 'socket.io-client';
 
-const socket = io('http://localhost:9005');
+const socket = io(import.meta.env.VITE_WEBSOCKET_HOST);
 
 const open = ref(false)
 const openConfirmation = ref(false)
@@ -16,7 +16,7 @@ const state = reactive({
 });
 
 const joinParty = () => {
-  fetch('http://localhost:3000/room/join/' + state.partyCode, {
+  fetch(import.meta.env.VITE_API_HOST + '/room/join/' + state.partyCode, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ const joinParty = () => {
 }
 
 const createParty = () => {
-  fetch('http://localhost:3000/room', {
+  fetch(import.meta.env.VITE_API_HOST + '/room', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

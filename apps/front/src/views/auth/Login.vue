@@ -10,7 +10,7 @@ const state = reactive({
 const useUser = userStore();
 const router = useRouter();
 const submit = () => {
-  fetch('http://localhost:3000/auth/login', {
+  fetch(import.meta.env.VITE_API_HOST + '/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

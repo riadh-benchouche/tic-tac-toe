@@ -42,7 +42,7 @@ const logout = () => {
             <Bars3Icon class="h-6 w-6" aria-hidden="true"/>
           </button>
         </div>
-        <div class="space-y-2 py-6 hidden">
+        <div class="space-y-2 py-6 hidden lg:flex lg:flex-1 lg:justify-center lg:space-x-6 lg:space-y-0">
           <a href="/chat"
              class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-200 hover:text-white">Chat</a>
         </div>

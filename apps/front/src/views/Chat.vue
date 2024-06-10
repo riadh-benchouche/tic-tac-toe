@@ -6,13 +6,13 @@ import {userStore} from "@/store/UserStore";
 
 const newMessage = ref('');
 const useUser = userStore();
-const socket = io('http://localhost:9005');
+const socket = io(import.meta.env.VITE_WEBSOCKET_HOST);
 
 const state = reactive({
   messages: [],
 });
 const getMessages = () => {
-  fetch('http://localhost:3000/messages', {
+  fetch(import.meta.env.VITE_API_HOST + '/messages', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
